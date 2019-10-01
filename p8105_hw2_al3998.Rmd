@@ -16,36 +16,36 @@ library(ggplot2)
 ## Problem 1
 ```{r  message=FALSE}
 #Import the data#
-mrtrash_data = read_excel("~/Desktop/data science/p8105_hw2_al3998/data/WheelTotals.xlsx",
-              sheet = "Mr. Trash Wheel",range = "A2:N338")%>%
+mrtrash_data = read_excel("~/Desktop/data science/p8105_hw2_al3998/data/TrashWheel.xlsx",
+              sheet = "Mr. Trash Wheel",skip = 1)%>%
              janitor::clean_names()%>% 
              drop_na(dumpster)%>%
+             select(dumpster:homes_powered) %>% 
              mutate(sports_balls = as.integer(round(sports_balls, digits = 0)))
 
-preci_17_data = read_excel("~/Desktop/data science/p8105_hw2_al3998/data/WheelTotals.xlsx",
-                           sheet = "2017 Precipitation",skip = 1)%>%
+preci_17_data = read_excel("~/Desktop/data science/p8105_hw2_al3998/data/TrashWheel.xlsx",
+               sheet = "2017 Precipitation",range = "A2:B14")%>%
                 janitor::clean_names()%>%
                 drop_na(total)%>%
                 mutate(year = "2017")             
 
-preci_18_data = read_excel("~/Desktop/data science/p8105_hw2_al3998/data/WheelTotals.xlsx",
-                           sheet = "2018 Precipitation",skip = 1)%>%
+preci_18_data = read_excel("~/Desktop/data science/p8105_hw2_al3998/data/TrashWheel.xlsx",
+                sheet = "2018 Precipitation",range = "A2:B14")%>%
                 janitor::clean_names()%>%
                 drop_na(total)%>%
                 mutate(year = "2018")
-preci_data = full_join(preci_17_data,preci_18_data, by = c("total", "year", "month"))%>%
-
-mutate(month = month.name[month])
+preci_data = bind_rows(preci_17_data,preci_18_data)%>%
+   mutate(month = month.name[month])
 ```
-After reading and cleaning the data in the Mr. Trash Wheel sheet,there are 285 obs.of 14 variables,the variable columns in the data set include "dumpster","month","year","date" ,"sports_balls"and some other columns,among which all the numbers in the column "sports_balls" have been transformed into integer.
+After reading and cleaning the data in the Mr. Trash Wheel sheet,there are `r nrow(mrtrash_data)` obs.of `r ncol(mrtrash_data)` variables,the variable columns in the data set include `r mrtrash_data %>% select(dumpster:volume_cubic_yards) %>% colnames`and some other columns,among which all the numbers in the column "sports_balls" have been transformed into integer.
 
-After reading and cleaning the data in the 2018 Precipitation,there are 8 obs.of 3 variables including columns month,total and year.
-After reading and cleaning the data in the 2017 Precipitation,there are 13 obs.of 3 variables including columns of  month,total and year.
+After reading and cleaning the data in the 2018 Precipitation,there are `r nrow(preci_18_data)`  obs.of `r ncol(preci_18_data)` variables including columns `r colnames(preci_18_data)`.
+After reading and cleaning the data in the 2017 Precipitation,there are `r nrow(preci_17_data)` obs.of `r ncol(preci_17_data)`variables including columns of `r colnames(preci_17_data)`.
 
-After  combining 2018 Precipitation and 2017 Precipitation, the data in the data set called preci_data include month,total and year.
+After  combining 2018 Precipitation and 2017 Precipitation, the data in the data set called preci_data,there are `r nrow(preci_data)` obs. of `r ncol(preci_data)` and include `r colnames(preci_data)`.
 
-The total precipitation in 2018 is `r sum(preci_18_data %>% drop_na(month) %>%pull(total))`
-And the median of sports balls in a dumpster in 2017 is `r median((mrtrash_data)%>%filter(year=="2017")%>% pull(sports_balls))`
+The total precipitation in 2018 is `r sum(preci_18_data %>% drop_na(month) %>%pull(total))`.
+And the median of sports balls in a dumpster in 2017 is `r median((mrtrash_data)%>%filter(year=="2017")%>% pull(sports_balls))`.
 
 
 ## Problem 2
@@ -57,7 +57,7 @@ pols_month_data = read_csv("~/Desktop/data science/p8105_hw2_al3998/data/pols-mo
                   pivot_longer(cols = starts_with("prez"),
                                names_to = "president",
                                names_prefix = "prez_" )%>%
-                  filter(value == 1)%>%
+                  filter(value != 0)%>%
                   select(-day,-value)
  
 snp_data  =   read_csv("~/Desktop/data science/p8105_hw2_al3998/data/snp.csv")%>%               
@@ -107,12 +107,9 @@ popular_baby_data = read_csv("~/Desktop/data science/p8105_hw2_al3998/data/Popul
 
 ## Producing a table showing the most popular name among male children over time.
 ```{r}
-   male_data = filter(popular_baby_data,gender == "MALE")%>%
-   group_by(childs_first_name)%>%
-   summarise(count_sum = sum(count))%>%
-   arrange(desc(count_sum))
-   male_table = filter(popular_baby_data,gender == "MALE" & childs_first_name =="Ethan")%>%
-   pivot_wider(names_from = year_of_birth, values_from = rank,id_cols = ethnicity)
+   male_data = filter(popular_baby_data,gender == "MALE",rank =="1")%>%
+   select(ethnicity,year_of_birth,childs_first_name) %>% 
+   pivot_wider(names_from = year_of_birth, values_from = childs_first_name)
 ```
 
 ## producing a scatter plot
@@ -120,5 +117,6 @@ popular_baby_data = read_csv("~/Desktop/data science/p8105_hw2_al3998/data/Popul
   plot_data = filter(popular_baby_data,gender == "MALE",ethnicity == "WHITE NON HISP",year_of_birth == "2016")
   ggplot(plot_data,aes(x = rank,y = count))+geom_point()+xlab( "rank of the names")+ ylab( "number of children with a name")
 ```
-
+ 
+#When the rank of the names gets higher,there are more children have this name
 
