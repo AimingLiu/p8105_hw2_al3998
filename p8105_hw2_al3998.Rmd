@@ -103,6 +103,7 @@ popular_baby_data = read_csv("~/Desktop/data science/p8105_hw2_al3998/data/Popul
     Olivia_data = popular_baby_data %>% 
     filter(gender == "FEMALE" & childs_first_name == "Olivia") %>%
     pivot_wider(names_from = year_of_birth, values_from = rank,id_cols = ethnicity)
+    Olivia_data
 ```
 
 ## Producing a table showing the most popular name among male children over time.
@@ -110,6 +111,7 @@ popular_baby_data = read_csv("~/Desktop/data science/p8105_hw2_al3998/data/Popul
    male_data = filter(popular_baby_data,gender == "MALE",rank =="1")%>%
    select(ethnicity,year_of_birth,childs_first_name) %>% 
    pivot_wider(names_from = year_of_birth, values_from = childs_first_name)
+  male_data
 ```
 
 ## producing a scatter plot
