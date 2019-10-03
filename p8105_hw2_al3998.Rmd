@@ -16,20 +16,20 @@ library(ggplot2)
 ## Problem 1
 ```{r  message=FALSE}
 #Import the data#
-mrtrash_data = read_excel("~/Desktop/data science/p8105_hw2_al3998/data/TrashWheel.xlsx",
+mrtrash_data = read_excel("./data/TrashWheel.xlsx",
               sheet = "Mr. Trash Wheel",skip = 1)%>%
              janitor::clean_names()%>% 
              drop_na(dumpster)%>%
              select(dumpster:homes_powered) %>% 
              mutate(sports_balls = as.integer(round(sports_balls, digits = 0)))
 
-preci_17_data = read_excel("~/Desktop/data science/p8105_hw2_al3998/data/TrashWheel.xlsx",
+preci_17_data = read_excel("./data/TrashWheel.xlsx",
                sheet = "2017 Precipitation",range = "A2:B14")%>%
                 janitor::clean_names()%>%
                 drop_na(total)%>%
                 mutate(year = "2017")             
 
-preci_18_data = read_excel("~/Desktop/data science/p8105_hw2_al3998/data/TrashWheel.xlsx",
+preci_18_data = read_excel("./data/TrashWheel.xlsx",
                 sheet = "2018 Precipitation",range = "A2:B14")%>%
                 janitor::clean_names()%>%
                 drop_na(total)%>%
@@ -50,7 +50,7 @@ And the median of sports balls in a dumpster in 2017 is `r median((mrtrash_data)
 
 ## Problem 2
 ```{r message=FALSE}
-pols_month_data = read_csv("~/Desktop/data science/p8105_hw2_al3998/data/pols-month.csv")%>%
+pols_month_data = read_csv("./data/pols-month.csv")%>%
                   janitor::clean_names()%>%
                   separate(mon,into = c("year", "month","day"), sep = "-")%>%
                   mutate(month = month.name[as.numeric(month)])%>%
@@ -60,7 +60,7 @@ pols_month_data = read_csv("~/Desktop/data science/p8105_hw2_al3998/data/pols-mo
                   filter(value != 0)%>%
                   select(-day,-value)
  
-snp_data  =   read_csv("~/Desktop/data science/p8105_hw2_al3998/data/snp.csv")%>%               
+snp_data  =   read_csv("./data/snp.csv")%>%               
               janitor::clean_names()%>%
               separate(date,into = c("month", "day","year"), sep = "/")%>%
               arrange(year, month)%>%
@@ -68,7 +68,7 @@ snp_data  =   read_csv("~/Desktop/data science/p8105_hw2_al3998/data/snp.csv")%>
               select(year,month,close,-day)
 
  
- unemployment_data = read_csv("~/Desktop/data science/p8105_hw2_al3998/data/unemployment.csv")%>%
+ unemployment_data = read_csv("./data/unemployment.csv")%>%
                      pivot_longer(
                      cols=Jan:Dec,
                      names_to = "month")%>%
@@ -92,7 +92,7 @@ After merging the three data sets,the data sets called "pols_snp_une_data" inclu
 ## Problem 3
 ## Load and tidy the data
 ```{r  message=FALSE}
-popular_baby_data = read_csv("~/Desktop/data science/p8105_hw2_al3998/data/Popular_Baby_Names.csv")%>%
+popular_baby_data = read_csv("./data/Popular_Baby_Names.csv")%>%
                     janitor::clean_names()%>%
                     mutate(ethnicity = recode(ethnicity,"ASIAN AND PACIFIC ISLANDER" = "ASIAN AND PACI","BLACK NON HISPANIC" = "BLACK NON HISP","WHITE NON HISPANIC" = "WHITE NON HISP"))%>%
                      mutate(childs_first_name = str_to_title(childs_first_name))%>%
